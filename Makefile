@@ -1,5 +1,8 @@
 .SUFFIXES: .cpp .hpp
 
+#VERSION
+VERSION	= 1.2
+
 # Programs
 SHELL 	= bash
 CC     	= g++
@@ -14,6 +17,7 @@ PRINTF	= printf
 ######################################
 # Project Name (generate executable with this name)
 TARGET_LIB = libsre.a
+TARGET_ZIP = sre-lib-v$(VERSION).tgz
 
 # Project Paths
 PROJECT_ROOT=.
@@ -23,6 +27,7 @@ OBJDIR = $(PROJECT_ROOT)/obj
 BINDIR = $(PROJECT_ROOT)/bin
 DOCDIR = $(PROJECT_ROOT)/doc
 LIBDIR = $(PROJECT_ROOT)/lib
+BUNDIR = $(PROJECT_ROOT)/sre-lib
 EXMDIR = $(PROJECT_ROOT)/examples
 
 INCLUDE_PATH = /usr/include
@@ -61,6 +66,9 @@ SRCS := $(wildcard $(SREDIR)/*.cpp)
 INCS := $(wildcard $(SREDIR)/*.hpp)
 OBJS := $(SRCS:$(SREDIR)/%.cpp=$(OBJDIR)/%.o)
 
+EXAMPLES := $(wildcard $(EXMDIR)/*.cpp)
+EXOBJS := $(EXAMPLES:$(EXMDIR)/%.cpp=$(OBJDIR)/%.o)
+EXBINS := $(EXAMPLES:$(EXMDIR)/%.cpp=$(BINDIR)/%.out)
 
 .PHONY: all setup compsetup doc clean distclean
 
@@ -99,6 +107,9 @@ $(LIBDIR)/$(TARGET_LIB): $(OBJS)
 	@$(RM) -f temp.log temp.err
 	@$(PRINTF) "${OK_COLOR}%50s\n${NO_COLOR}" "[DONE]"
 
+########################################################################
+## Installation
+
 install: setup $(LIBDIR)/$(TARGET_LIB)
 	@$(ECHO) "Installing Library Files ...  "
 	@$(CP) $(LIBDIR)/$(TARGET_LIB) $(INSTALL_PATH)
@@ -109,6 +120,48 @@ install: setup $(LIBDIR)/$(TARGET_LIB)
 	@$(ECHO) "Copying header files ...  "
 	@$(CP) $(SRCDIR)/sre.h $(INCLUDE_PATH)
 	@$(PRINTF) "${OK_COLOR}%50s\n${NO_COLOR}" "[DONE]"
+
+########################################################################
+## Uninstallation
+
+uninstall: distclean
+	@$(ECHO) "Uninstalling Library Files ...  "
+	@$(RM) -rf $(INSTALL_PATH)/$(TARGET_LIB)
+	@$(RM) -rf $(INCLUDE_PATH_SRE)
+	@$(ECHO) "Deleting header files ...  "
+	@$(RM) -rf $(INCLUDE_PATH)/sre.h
+	@$(PRINTF) "${OK_COLOR}%50s\n${NO_COLOR}" "[DONE]"
+
+
+########################################################################
+## Examples
+
+examples: compsetup $(EXBINS)
+
+$(EXOBJS): $(OBJDIR)/%.o : $(EXMDIR)/%.cpp
+	@$(PRINTF) "$(MESG_COLOR)Compiling: $(NO_COLOR) $(FILE_COLOR) %25s$(NO_COLOR)" "$(notdir $<)"
+	@$(CC) $(CPPFLAGS) -c $< -o $@ -MD 2> temp.log || touch temp.err
+	@if test -e temp.err; \
+	then $(PRINTF) $(ERR_FMT) $(ERR_STRING) && $(CAT) temp.log; \
+	elif test -s temp.log; \
+	then $(PRINTF) $(WARN_FMT) $(WARN_STRING) && $(CAT) temp.log; \
+	else printf "${OK_COLOR}%30s\n${NO_COLOR}" "[OK]"; \
+	fi;
+	@$(RM) -f temp.log temp.err
+
+$(EXBINS): $(BINDIR)/%.out : $(OBJDIR)/%.o $(OBJS)
+	@$(PRINTF) "$(MESG_COLOR)Building executable:$(NO_COLOR) $(FILE_COLOR) %16s$(NO_COLOR)" "$(notdir $@)"
+	@$(CC) -o $@ $(LDFLAGS) $< $(OBJS) $(LIBS) 2> temp.log || touch temp.err
+	@if test -e temp.err; \
+	then $(PRINTF) $(ERR_FMT) $(ERR_STRING) && $(CAT) temp.log; \
+	elif test -s temp.log; \
+	then $(PRINTF) $(WARN_FMT) $(WARN_STRING) && $(CAT) temp.log; \
+	else $(PRINTF) $(OK_FMT) $(OK_STRING); \
+	fi;
+	@$(RM) -f temp.log temp.err
+
+########################################################################
+## Documentation and CleanUp
 
 doc:
 	@$(ECHO) "Generating Doxygen Documentation ...  "
@@ -123,6 +176,15 @@ clean:
 	 
 distclean: clean
 	@$(PRINTF) "Removing compiled files ... "
-	@$(RM) -rf $(BINDIR) $(DOCDIR)/html $(LIBDIR)
+	@$(RM) -rf $(BINDIR) $(DOCDIR)/html $(LIBDIR) *.tgz
 	@$(PRINTF) "${OK_COLOR}%40s\n${NO_COLOR}" "[OK]"
+	
+bundle: distclean
+	@$(ECHO) "Bundling to compressed folder ... "
+	@$(MKDIR) -p $(BUNDIR)
+	@$(CP) -r $(SRCDIR) $(DOCDIR) $(EXMDIR) Makefile README* $(BUNDIR)
+	@tar -zcvf $(TARGET_ZIP) $(BUNDIR)
+	@$(RM) -rf $(BUNDIR)
+	@$(PRINTF) "${OK_COLOR}%50s\n${NO_COLOR}" "[DONE]"
+	
 	
