@@ -2,8 +2,11 @@
 #include <cstdio>
 #include <cstdlib>
 #include <vector>
+#include <list>
+
 #include "MemoryBlock.hpp"
 #include "Word.hpp"
+#include "RegExpr.hpp"
 
 using namespace std ;
 
@@ -11,6 +14,14 @@ Word::Word(vector<MemoryBlock>& mBlocks) {
 	letterCount_ = mBlocks.size() ;
 	for (int i=0;i<letterCount_;i++) {
 		letters_[i]=mBlocks[i];
+	}
+}
+
+Word::Word(list<MemoryBlock*> mBlocks) {
+	letterCount_ = mBlocks.size() ;
+	while (!mBlocks.empty()) {
+		addLetter(*(mBlocks.front()));
+		mBlocks.pop_front() ;
 	}
 }
 
@@ -49,4 +60,14 @@ void Word::removeLetter(int i) {
 		cerr << "ERROR! : Word : Length of word is shorter." << endl ;
 		exit(EXIT_FAILURE) ;
 	}
+}
+
+bool Word::operator <=(Word& word) {
+	sre rExpr (word) ;
+	return rExpr.checkInclusion(*this) ;
+}
+	
+	
+bool Word::operator >=(Word& word) {
+	return word<=(*this) ;
 }

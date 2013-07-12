@@ -18,6 +18,7 @@ class sre {
 		
 		sre() {termCount_ = 0; terms_.clear() ;}
 		sre(vector<ProductExpr>& termVec) ;
+		sre(Word& word) ;
 		
 		void addProduct(ProductExpr& aExpr) ;
 		

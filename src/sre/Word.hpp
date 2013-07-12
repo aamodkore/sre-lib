@@ -1,6 +1,7 @@
 #include <iostream>
 #include <cstdio>
 #include <vector>
+#include <list>
 
 #include "MemoryBlock.hpp"
 
@@ -18,6 +19,7 @@ class Word {
 		
 		Word() {letters_.clear(); letterCount_=0 ;}
 		Word(vector<MemoryBlock>& mBlocks) ;
+		Word(list<MemoryBlock*> mBlocks) ;
 		
 		void addLetter(MemoryBlock& mletter) ;
 	
@@ -30,6 +32,10 @@ class Word {
 		MemoryBlock* letter(int i) ;
 		
 		void removeLetter(int i) ;
+		
+		bool operator <=(Word& word) ;
+		bool operator >=(Word& word) ;
+		
 	
 } ;
 

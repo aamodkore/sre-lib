@@ -18,6 +18,7 @@ class ProductExpr {
 		
 		ProductExpr() {termCount_ = 0; terms_.clear() ;}
 		ProductExpr(vector<AtomicExpr>& termVec) ;
+		ProductExpr(Word& word) ;
 		
 		void addAtomic(AtomicExpr& aExpr) ;
 		

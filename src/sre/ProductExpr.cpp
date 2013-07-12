@@ -17,7 +17,17 @@ ProductExpr::ProductExpr(vector<AtomicExpr>& termVec) {
 		terms_.push_back(termVec[i]) ;
 }
 
-
+ProductExpr::ProductExpr(Word& word) {
+	termCount_ = word.length() ;
+	terms_.clear() ;
+	MemoryBlock block ;
+	AtomicExpr aExpr ;
+	for (int i=0; i<termCount_; i++) {
+		block = word.getLetter(i) ;
+		aExpr = AtomicExpr(block) ;
+		terms_.push_back(aExpr) ;
+	}
+}
 
 
 void ProductExpr::addAtomic(AtomicExpr& aExpr){

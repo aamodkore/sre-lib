@@ -23,6 +23,13 @@ AtomicExpr::AtomicExpr(AtomicType type, MemoryBlock& block) :
 		ExprType_ = type ;
 		combined_ = block.getBDD() ;
 	}
+
+AtomicExpr::AtomicExpr(MemoryBlock& block) : 
+	symbol_(block) {
+		if (block.strong()) ExprType_ = STRONG_SYM ;
+		else ExprType_ = WEAK_SYM ;
+		combined_ = block.getBDD() ;
+	}
 		
 
 void AtomicExpr::addBlock(MemoryBlock& mBlock) {

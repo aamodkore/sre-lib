@@ -16,6 +16,13 @@ sre::sre(vector<ProductExpr>& termVec) {
 		terms_[i] = termVec[i] ;
 }
 
+sre::sre(Word& word) {
+	termCount_ = 1 ;
+	terms_.clear() ;
+	ProductExpr pExpr (word);
+	terms_.push_back(pExpr) ;
+}
+
 void sre::addProduct(ProductExpr& pExpr) {
 	terms_.push_back(pExpr) ;
 	termCount_++ ;

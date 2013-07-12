@@ -27,6 +27,7 @@ class AtomicExpr {
 		AtomicExpr(vector<MemoryBlock>& mBlocks) ;
 		AtomicExpr() {ExprType_ = STAR_EXPR ; blocknum_ = 0 ; combined_ = bddfalse;}
 		AtomicExpr(AtomicType type) {ExprType_ = type ;}
+		AtomicExpr(MemoryBlock& block) ;
 		AtomicExpr(AtomicType type, MemoryBlock& block) ;
 		
 		AtomicType getExprType() {return ExprType_ ;}
