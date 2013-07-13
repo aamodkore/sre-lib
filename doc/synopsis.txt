@@ -1,0 +1,82 @@
+Implementation of SREs (Simple Regular Expressions) with BDD (Binary 
+Decision Diagram) Trees.
+
+The following is a C++ implementation of SRE(Simple Regular Expressions) 
+with elements as instances of memory with boolean variables(bits). This 
+is usefull in the implementation of the EEC algorithm on the WSTS(Well 
+Structured Ordering System) formed by the reduction of TSO to a Lossy 
+Channel System. SREs sre the class of REs that represent downward-closed
+ regular languages.
+
+-- Aamod Kore
+
+--------------------------------------------------
+
+Most functions in classes are quite self-explanatory,
+for e.g. getLetter(), addTerm(), length() etc.
+
+Function checkInclusion(<datatype>) is present in almost all classes and
+ it checks whether the <datatype> can be "included" or is a part of or 
+belongs to to the class object.
+ 
+for example, regExpr.checkInclusion(word) denotes whether word is 
+included in the language represented by the SRE regExpr. Simarly 
+regExpr1.checkInclusion(regExpr2) denotes whether the language 
+represented by the SRE regExpr2 is included in (i.e., is a subset of) 
+the language represented by the SRE regExpr2.
+
+For nost cases, if for the same class type, the overloaded operator >= 
+gives results same as checkInclusion, i.e. 
+(T1>=T2) same as T1.checkInclusion(T2) same as (T2<=T1)
+, where T1 and T2 are data members of same class.
+------------------------------
+
+
+Following is a gist of the claases:
+
+-----
+1. MemoryBlock:
+
+It is one instance of memory. It contains a certain number of 
+binary/boolean variables(bits), whose values are stored in the form of a 
+BDD. It also contains pointers for <proccess, variable> pairs, as 
+required. If one or more such pointers are present the MemoryBlock 
+becomes a "strong" block. New variables may not be added after a block 
+has been constructed. The number of variables must be set in the 
+constructor itself. New pointers may be added or removed as needed.
+
+-----
+2. Word:
+
+A word is simply memory blocks together. It maintains a vector of words. 
+Functionalities included adding letters, removing letters, accessing 
+letters and checking the subword relation(overloaded by the operators 
+<= and >=). [NOTE: Here letters are MemoryBlock objects.]
+
+-----
+3. AtomicExpr:
+
+An atomic expression is either a weak expression (a+EPSILON), a strong 
+exression (a) or a Kleene-star expression (a_1 + a_2 + ... + a_n)* . 
+Star Expreesions are stored as a single BDD, thereby avoiding the need 
+to store all blocks a_1, a_2, ... ,a_n.
+
+-----
+4. ProductExpr:
+
+Represents product (concatenation) of atomic expressions.
+
+-----
+5. SRE:
+
+Represents a general SRE, which is the union of product exressions. 
+
+------------------------------
+
+The files 'switch_queue.h' and 'bddextra.h' contain classes, and 
+procedures required for the implementation of functions in the above 
+classes. These do not directly form part of Simple Regular Expressions.
+
+
+--------------------------------------------------
+--------------------------------------------------
