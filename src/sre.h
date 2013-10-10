@@ -1,3 +1,8 @@
+/**	Simple (Downward closed) Regular Expression
+	By,
+	Aamod Kore
+	**/
+
 #ifndef SRE_COMPLETE
 #define SRE_COMPLETE
 
